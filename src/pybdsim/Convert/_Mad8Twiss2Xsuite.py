@@ -181,7 +181,14 @@ def Mad8Twiss2Xsuite(mad8twiss,
     surv0 = _getInputPosAnglAtIndex(mad8survey, startindex-1)
     tws0 = _getInputTwissAtIndex(mad8twiss, startindex-1)
 
-    return env, tws0, surv0
+    class xsuite:
+        def __init__(self, env, tws0, surv0, s0):
+            self.env = env
+            self.tws0 = tws0
+            self.surv0 = surv0
+            self.s0 = s0
+
+    return xsuite(env, tws0, surv0, 0)
 
 
 def _getInputPosAnglAtIndex(mad8survey, index=0):
