@@ -257,9 +257,9 @@ def DrawMachineLattice(axesinstance, bdsasciidataobject, sOffset=0.0):
     # plot beam line
     ends = bds.SEnd()
     smax = ends[-1] + sOffset
-    ax.plot([starts[0] + sOffset, smax],[0,0],'k-',lw=1)
+    ax.plot([starts[0], smax],[0,0],'k-',lw=1)
     ax.set_ylim(-0.2,0.2)
-    ax.set_xlim(starts[0] + sOffset, smax)
+    ax.set_xlim(starts[0], smax)
 
 
 def SubplotsWithDrawnMachineLattice(survey, nrows=2, machine_plot_gap=0.01, gridspec_kw=None, subplots_kw=None, **fig_kw):
