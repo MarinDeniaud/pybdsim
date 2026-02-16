@@ -19,7 +19,7 @@ def _getCellAndTws0FromList(ocelotlist):
     return cell, tws0
 
 
-def _getOutuptSurveyPoint(ocelotlist, s0=0, x0=0, y0=0, z0=0, ang_x=0, ang_y=0):
+def _getOutuptSurveyPoint(ocelotlist, x0=0, y0=0, z0=0, ang_x=0, ang_y=0):
     """ Compute the position and angle at the end of a line. """
     if isinstance(ocelotlist, list):
         cell, tws0 = _getCellAndTws0FromList(ocelotlist)
@@ -31,10 +31,10 @@ def _getOutuptSurveyPoint(ocelotlist, s0=0, x0=0, y0=0, z0=0, ang_x=0, ang_y=0):
     surv = lat.survey(x0=x0, y0=y0, z0=z0, ang_x=ang_x, ang_y=ang_y)
     surv0_xsuite = {'X0': surv[0][-1], 'Y0': surv[1][-1], 'Z0': surv[2][-1],
                     'theta0': surv[3][-1], 'phi0': surv[4][-1], 'psi0': 0}
-    return surv0_xsuite, tws[-1].s + s0
+    return surv0_xsuite, tws[-1].s
 
 
-def Ocelot2Xsuite(ocelot, line_name='line_from_ocelot', s0=0, x0=0, y0=0, z0=0, ang_x=0, ang_y=0, previousLineList=None):
+def Ocelot2Xsuite(ocelot, line_name='line_from_ocelot', s0=None, x0=None, y0=None, z0=0, ang_x=0, ang_y=0, previousLineList=None):
     """ Convert Ocelot lattice to Xsuite environment.
 
         +------------------+---------------------------------------------------------+
@@ -60,7 +60,10 @@ def Ocelot2Xsuite(ocelot, line_name='line_from_ocelot', s0=0, x0=0, y0=0, z0=0, 
     """
 
     lattice = _ocl.MagneticLattice(ocelot.cell)
-    tws0_ocelot = ocelot.tws0
+    try:
+        tws0_ocelot = ocelot.tws0
+    except:
+        tws0_ocelot = ocelot.twiss0
 
     env = _xt.Environment()
     env.particle_ref = _xt.Particles(p0c=tws0_ocelot.E*1e9, q0=-1, mass0=_xt.ELECTRON_MASS_EV)
@@ -150,6 +153,13 @@ def Ocelot2Xsuite(ocelot, line_name='line_from_ocelot', s0=0, x0=0, y0=0, z0=0, 
                    'dx': tws0_ocelot.Dx, 'dy': tws0_ocelot.Dy,
                    'dpx': tws0_ocelot.Dxp, 'dpy': tws0_ocelot.Dyp,
                    'mux': tws0_ocelot.mux, 'muy': tws0_ocelot.muy}
+
+    if s0 is None:
+        s0 = tws0_ocelot.s
+    if x0 is None:
+        x0 = tws0_ocelot.x
+    if y0 is None:
+        y0 = tws0_ocelot.y
 
     if previousLineList is not None:
         surv0_xsuite, s0 = _getOutuptSurveyPoint(previousLineList, s0, x0, y0, z0, ang_x, ang_y)
