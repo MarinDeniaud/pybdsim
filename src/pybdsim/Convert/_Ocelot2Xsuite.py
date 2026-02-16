@@ -63,7 +63,7 @@ def Ocelot2Xsuite(ocelot, line_name='line_from_ocelot', s0=0, x0=0, y0=0, z0=0, 
     tws0_ocelot = ocelot.tws0
 
     env = _xt.Environment()
-    env.particle_ref = _xt.Particles(p0c=tws0_ocelot.E, q0=-1, mass0=_xt.ELECTRON_MASS_EV)
+    env.particle_ref = _xt.Particles(p0c=tws0_ocelot.E*1e9, q0=-1, mass0=_xt.ELECTRON_MASS_EV)
 
     linelist = []
     for elem in lattice.sequence:
