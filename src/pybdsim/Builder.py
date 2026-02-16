@@ -1471,7 +1471,7 @@ class Machine(object):
 
         verboseresult = verbose or self.verbose
         writer = _Writer.Writer()
-        writer.WriteMachine(self,filename,verboseresult)
+        writer.WriteMachine(self, filename, verbose=verboseresult)
 
     def AddObject(self, obj):
         """
