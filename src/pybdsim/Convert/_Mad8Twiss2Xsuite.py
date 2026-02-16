@@ -192,7 +192,7 @@ def _getInputPosAnglAtIndex(mad8survey, index=0):
         return {'X0': row.X, 'Y0': row.Y, 'Z0': row.Z,
                 'theta0': row.THETA + _np.nan_to_num(row.ANGLE), 'phi0': row.PHI, 'psi0': row.PSI}
     except:
-        return None
+        return {}
 
 
 def _getInputTwissAtIndex(mad8twiss, index=0):
@@ -204,7 +204,7 @@ def _getInputTwissAtIndex(mad8twiss, index=0):
                 'dx': row.DX, 'dy': row.DY, 'dpx': row.DPX, 'dpy': row.DPY,
                 'mux': row.MUX, 'muy': row.MUY}
     except:
-        return None
+        return {}
 
 
 def _getStartEnergy(mad8twiss):
