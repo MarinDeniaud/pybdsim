@@ -9,8 +9,8 @@ from .. import Data as _Data
 from ..Options import Options as _Options
 import pybdsim._General
 
-_ignoreableThinElements = {_xt.Marker, _xt.LimitRect, _xt.LimitEllipse, _xt.Wire,
-                           _xt.ParticlesMonitor, _xt.BeamPositionMonitor, _xt.BeamProfileMonitor}
+_ignoreableThinElements = {_xt.LimitRect, _xt.LimitEllipse, _xt.Wire,
+                           _xt.ParticlesMonitor, _xt.BeamProfileMonitor}
 
 # Constants
 # anything below this length is treated as a thin element
