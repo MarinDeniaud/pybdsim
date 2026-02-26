@@ -234,7 +234,7 @@ def Xsuite2Gmad(xsuite, linename, outputfilename,
             itemsomitted.append(name)
             continue
 
-        gmadElement = _Xsuite2GmadElementFactory(name, item, allelementdict, verbose, userdict, collimatordict, partnamedict,
+        gmadElement = _Xsuite2GmadElementFactory(env, name, item, allelementdict, verbose, userdict, collimatordict, partnamedict,
                                                  flipmagnets, linear, zerolength, ignorezerolengthitems, namePrepend=namePrepend)
 
         if gmadElement is None:  # factory returned nothing, go to next item.
@@ -277,7 +277,7 @@ def Xsuite2Gmad(xsuite, linename, outputfilename,
     return machine, itemsomitted
 
 
-def _Xsuite2GmadElementFactory(name, item, allelementdict, verbose, userdict, collimatordict, partnamedict,
+def _Xsuite2GmadElementFactory(env, name, item, allelementdict, verbose, userdict, collimatordict, partnamedict,
                                flipmagnets, linear, zerolength, ignorezerolengthitems, namePrepend):
     """
     Function which makes the correct GMAD element given a Xsuite element.
@@ -300,7 +300,10 @@ def _Xsuite2GmadElementFactory(name, item, allelementdict, verbose, userdict, co
     try:
         l = item.length
     except AttributeError:
-        l = 0
+        try: # If element is a slice
+            l = env[item.parent_name].length * item.weight
+        except AttributeError:
+            l = 0
     try:
         tilt = item.rot_s_rad
     except AttributeError:
@@ -327,7 +330,7 @@ def _Xsuite2GmadElementFactory(name, item, allelementdict, verbose, userdict, co
         kws['tilt'] = tilt
 
     #######################################################################
-    if Type == _xt.Drift:
+    if Type == _xt.Drift or Type == _xt.DriftSlice:
         return _Builder.Drift(rname, l, **kws)
     #######################################################################
     elif Type == _xt.Marker:
