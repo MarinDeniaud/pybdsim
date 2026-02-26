@@ -188,7 +188,12 @@ def Mad8Twiss2Xsuite(mad8twiss,
             self.surv0 = surv0
             self.s0 = s0
 
-    return xsuite(env, tws0, surv0, 0)
+    if startindex is not None and startindex != 0:
+        s0 = mad8twiss.data.S[startindex-1]
+    else:
+        s0 = 0
+
+    return xsuite(env, tws0, surv0, s0)
 
 
 def _getInputPosAnglAtIndex(mad8survey, index=0):
