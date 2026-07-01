@@ -15,20 +15,38 @@ def Machine2Ocelot(bdsmachine, s0=0):
        +-----------------+---------------------------------------------------------+
     """
 
+    def loadParam(machine, key):
+        try:
+            string = machine.beam[key]
+        except KeyError:
+            return 0.0
+        if '*' in string:
+            value_str, unit = string.split("*")
+            if key == 'energy':
+                if unit == 'eV':
+                    return float(value_str)*1e-9
+                elif unit == 'keV':
+                    return float(value_str)*1e-6
+                elif unit == 'MeV':
+                    return float(value_str)*1e-3
+                elif unit == 'GeV':
+                    return float(value_str)
+            else:
+                return float(value_str)
+        else:
+            if key == 'energy':
+                return float(string)*1e-9
+            return float(string)
+
     # Initial Twiss parameters
-    tws0 = _ocl.Twiss()
-    tws0.beta_x = float(bdsmachine.beam['betx'].split('*')[0])
-    tws0.beta_y = float(bdsmachine.beam['bety'].split('*')[0])
-    tws0.alpha_x = float(bdsmachine.beam['alfx'].split('*')[0])
-    tws0.alpha_y = float(bdsmachine.beam['alfy'].split('*')[0])
-    tws0.Dx = float(bdsmachine.beam['dispx'].split('*')[0])
-    tws0.Dy = float(bdsmachine.beam['dispy'].split('*')[0])
-    tws0.Dxp = float(bdsmachine.beam['dispxp'].split('*')[0])
-    tws0.Dyp = float(bdsmachine.beam['dispyp'].split('*')[0])
-    # tws0.mux = float(bdsmachine.beam['mux'].split('*')[0])
-    # tws0.muy = float(bdsmachine.beam['muy'].split('*')[0])
-    tws0.E = float(bdsmachine.beam['energy'].split('*')[0])*1e-9
-    tws0.s = s0
+    tws0 = _ocl.Twiss(beta_x=loadParam(bdsmachine, 'betx'), beta_y=loadParam(bdsmachine, 'bety'),
+                      alpha_x=loadParam(bdsmachine, 'alfx'), alpha_y=loadParam(bdsmachine, 'alfy'),
+                      Dx=loadParam(bdsmachine, 'dispx'), Dy=loadParam(bdsmachine, 'dispy'),
+                      Dxp=loadParam(bdsmachine, 'dispxp'), Dyp=loadParam(bdsmachine, 'dispyp'),
+                      mux=loadParam(bdsmachine, 'mux'), muy=loadParam(bdsmachine, 'muy'),
+                      emit_x=loadParam(bdsmachine, 'emitx'), emit_y=loadParam(bdsmachine, 'emity'),
+                      E=loadParam(bdsmachine, 'energy'), pp=loadParam(bdsmachine, 'sigmaE'),
+                      s=s0)
 
     cell = []
     # unique_name_list = []
