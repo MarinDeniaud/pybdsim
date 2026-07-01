@@ -569,7 +569,7 @@ def Xsuite2GmadBeam(line, tws0, startindex=0, verbose=False, extraParamsDict={})
     if startindex > 0:
         startindex -= 1
 
-    energy = line.env.particle_ref.p0c.item()
+    energy = line.env.particle_ref.p0c.item() / 1e9
     if 'EX' not in extraParamsDict or 'EY' not in extraParamsDict:
         raise ValueError('Missing emittance description in extraParamsDict')
     if 'Esprd' not in extraParamsDict:
