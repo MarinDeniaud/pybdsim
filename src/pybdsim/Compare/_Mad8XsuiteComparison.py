@@ -198,8 +198,13 @@ def _AddSurvey(figure, survey):
         _m8.Plot.AddMachineLatticeToFigure(figure, survey)
 
 
-def Mad8VsXsuite(twiss, xstline, tws0=None, survey=None, functions=None, postfunctions=None, figsize=(10, 5), xlim=(0, 0),
-                 saveAll=True, outputFileName=None, particle="electron", energySpread=1e-4, ex=1e-8, ey=1e-8):
+def Mad8VsXsuite(twiss, xsuiteInput, linename, survey=None, functions=None, postfunctions=None, figsize=(10, 5), xlim=(0, 0),
+                 saveAll=True, outputFileName=None, particle="electron", energySpread=1e-4, ex=1e-8, ey=1e-8,
+                 startindex=None,
+                 endindex=None,
+                 startname=None,
+                 endname=None,
+                 ):
     """ Compares Mad8 and Xsuite optics variables.
 
     +-----------------+---------------------------------------------------------+
@@ -240,8 +245,27 @@ def Mad8VsXsuite(twiss, xstline, tws0=None, survey=None, functions=None, postfun
 
     # load mad8 optics and compute xsuite optics
     mad8opt = _m8.Output(twiss)
-    xstline.build_tracker()
-    xstopt = xstline.twiss(**tws0)
+    xstopt = xsuiteInput.env[linename].twiss(**xsuiteInput.tws0)
+    xstopt.s = xstopt.s + xsuiteInput.s0
+
+    # Setup start and end index. Can be derived from element names.
+    if startindex is None:
+        startindex = 0
+    if endindex is None:
+        endindex = mad8opt.nrec
+    if startname is not None:
+        startindex = mad8opt.getIndexByNames(startname)
+        if type(startname) is list:
+            print('Element {} not unique. Taking the first one.'.format(startname))
+            startname = startname[0]
+    if endname is not None:
+        endindex = mad8opt.getIndexByNames(endname)
+        if type(endindex) is list:
+            print('Element {} not unique. Taking the last one.'.format(endname))
+            endindex = endindex[0]
+
+    mad8opt.data = mad8opt.data[startindex:endindex].reindex(index=range(0, mad8opt.nrec))
+    mad8opt.nrec = endindex - startindex
 
     # parameters required for calculating beam sizes, not written in mad8 output so have to supply manually.
     beamParams = {'esprd': energySpread, 'particle': particle, 'ex': ex, 'ey': ey}
@@ -262,7 +286,6 @@ def Mad8VsXsuite(twiss, xstline, tws0=None, survey=None, functions=None, postfun
 
     if saveAll:
         tfsname = repr(twiss)
-        xstname = xstline.name
         output_filename = "optics-report.pdf"
         if outputFileName is not None:
             output_filename = outputFileName
@@ -276,7 +299,7 @@ def Mad8VsXsuite(twiss, xstline, tws0=None, survey=None, functions=None, postfun
             for figure in figures:
                 pdf.savefig(figure)
             d = pdf.infodict()
-            d['Title'] = "{} (MAD8) VS {} (Xsuite) Optical Comparison".format(tfsname, xstname)
+            d['Title'] = "{} (MAD8) VS {} (Xsuite) Optical Comparison".format(tfsname, linename)
             d['CreationDate'] = _datetime.datetime.today()
         print("Written ", output_filename)
     return mad8opt
