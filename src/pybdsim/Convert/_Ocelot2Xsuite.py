@@ -19,7 +19,7 @@ def _getCellAndTws0FromList(ocelotlist):
     return cell, tws0
 
 
-def _getOutuptSurveyPoint(ocelotlist, x0=0, y0=0, z0=0, ang_x=0, ang_y=0):
+def _getOutuptSurveyPoint(ocelotlist, s0=0, x0=0, y0=0, z0=0, ang_x=0, ang_y=0):
     """ Compute the position and angle at the end of a line. """
     if isinstance(ocelotlist, list):
         cell, tws0 = _getCellAndTws0FromList(ocelotlist)
@@ -31,7 +31,7 @@ def _getOutuptSurveyPoint(ocelotlist, x0=0, y0=0, z0=0, ang_x=0, ang_y=0):
     surv = lat.survey(x0=x0, y0=y0, z0=z0, ang_x=ang_x, ang_y=ang_y)
     surv0_xsuite = {'X0': surv[0][-1], 'Y0': surv[1][-1], 'Z0': surv[2][-1],
                     'theta0': surv[3][-1], 'phi0': surv[4][-1], 'psi0': 0}
-    return surv0_xsuite, tws[-1].s
+    return surv0_xsuite, tws[-1].s + s0
 
 
 def Ocelot2Xsuite(ocelot, line_name='line_from_ocelot', s0=None, x0=None, y0=None, z0=0, ang_x=0, ang_y=0, previousLineList=None):
@@ -58,8 +58,15 @@ def Ocelot2Xsuite(ocelot, line_name='line_from_ocelot', s0=None, x0=None, y0=Non
         |                  | angle of this previous lattice.                         |
         +------------------+---------------------------------------------------------+
     """
+    if type(ocelot) is list:
+        cell = ()
+        for line in ocelot:
+            cell += line.cell
+        lattice = _ocl.MagneticLattice(cell)
+        ocelot = ocelot[0]
+    else:
+        lattice = _ocl.MagneticLattice(ocelot.cell)
 
-    lattice = _ocl.MagneticLattice(ocelot.cell)
     try:
         tws0_ocelot = ocelot.tws0
     except:
