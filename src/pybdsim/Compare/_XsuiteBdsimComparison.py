@@ -126,7 +126,7 @@ def _make_plotter(plot_info_dict):
 
         if survey is not None:
             _CallUserFigureFunctions(functions)
-            _AddSurvey(plot, survey)
+            _pybdsim.Plot.AddMachineLatticeFromSurveyToFigure(plot, survey)
             _CallUserFigureFunctions(postfunctions)
 
         plot.sca(plot.axes[0])
@@ -182,11 +182,11 @@ def _CallUserFigureFunctions(functions):
         functions()
 
 
-def _AddSurvey(figure, survey):
-    if survey is None:
-        return
-    else:
-        _m8.Plot.AddMachineLatticeToFigure(figure, survey)
+# def _AddSurvey(figure, survey):
+#     if survey is None:
+#         return
+#     else:
+#         _m8.Plot.AddMachineLatticeToFigure(figure, survey)
 
 
 def XsuiteVsBDSIM(xsuite, linename, bdsim, surveyfile=None, functions=None, postfunctions=None, figsize=(10, 5), xlim=(0, 0),
@@ -243,23 +243,23 @@ def XsuiteVsBDSIM(xsuite, linename, bdsim, surveyfile=None, functions=None, post
     bdsopt = _GetBDSIMOptics(bdsinst)
 
     # load mad8 survey
-    survey = _m8.Output(surveyfile, 'survey')
+    # survey = _m8.Output(surveyfile, 'survey')
 
     # parameters required for calculating beam sizes, not written in mad8 output so have to supply manually.
     beamParams = {'esprd': energySpread, 'particle': particle, 'ex': ex, 'ey': ey}
 
     # make plots
     # energy and npart plotted with individual methods
-    figures = [PlotBeta(xstopt, bdsopt, beamParams, functions=functions, postfunctions=postfunctions, figsize=figsize, xlim=xlim, survey=survey),
-               PlotAlpha(xstopt, bdsopt, beamParams, functions=functions, postfunctions=postfunctions, figsize=figsize, xlim=xlim, survey=survey),
-               PlotDisp(xstopt, bdsopt, beamParams, functions=functions, postfunctions=postfunctions, figsize=figsize, xlim=xlim, survey=survey),
-               PlotDispP(xstopt, bdsopt, beamParams, functions=functions, postfunctions=postfunctions, figsize=figsize, xlim=xlim, survey=survey),
-               # PlotSigma(xstopt, bdsopt, beamParams, functions=functions, postfunctions=postfunctions, figsize=figsize, xlim=xlim, survey=survey),
-               # PlotSigmaP(xstopt, bdsopt, beamParams, functions=functions, postfunctions=postfunctions, figsize=figsize, xlim=xlim, survey=survey),
-               # PlotEnergy(xstopt, bdsopt, beamParams, functions=functions, postfunctions=postfunctions, figsize=figsize, xlim=xlim, survey=survey),
-               PlotMean(xstopt, bdsopt, beamParams, functions=functions, postfunctions=postfunctions, figsize=figsize, xlim=xlim, survey=survey),
-               # PlotEmitt(xstopt, bdsopt, beamParams, functions=functions, postfunctions=postfunctions, figsize=figsize, xlim=xlim, survey=survey),
-               # PlotNParticles(xstopt, bdsopt, beamParams, functions=functions, postfunctions=postfunctions, figsize=figsize, xlim=xlim, survey=survey)
+    figures = [PlotBeta(xstopt, bdsopt, beamParams, functions=functions, postfunctions=postfunctions, figsize=figsize, xlim=xlim, survey=surveyfile),
+               PlotAlpha(xstopt, bdsopt, beamParams, functions=functions, postfunctions=postfunctions, figsize=figsize, xlim=xlim, survey=surveyfile),
+               PlotDisp(xstopt, bdsopt, beamParams, functions=functions, postfunctions=postfunctions, figsize=figsize, xlim=xlim, survey=surveyfile),
+               PlotDispP(xstopt, bdsopt, beamParams, functions=functions, postfunctions=postfunctions, figsize=figsize, xlim=xlim, survey=surveyfile),
+               # PlotSigma(xstopt, bdsopt, beamParams, functions=functions, postfunctions=postfunctions, figsize=figsize, xlim=xlim, survey=surveyfile),
+               # PlotSigmaP(xstopt, bdsopt, beamParams, functions=functions, postfunctions=postfunctions, figsize=figsize, xlim=xlim, survey=surveyfile),
+               # PlotEnergy(xstopt, bdsopt, beamParams, functions=functions, postfunctions=postfunctions, figsize=figsize, xlim=xlim, survey=surveyfile),
+               PlotMean(xstopt, bdsopt, beamParams, functions=functions, postfunctions=postfunctions, figsize=figsize, xlim=xlim, survey=surveyfile),
+               # PlotEmitt(xstopt, bdsopt, beamParams, functions=functions, postfunctions=postfunctions, figsize=figsize, xlim=xlim, survey=surveyfile),
+               # PlotNParticles(xstopt, bdsopt, beamParams, functions=functions, postfunctions=postfunctions, figsize=figsize, xlim=xlim, survey=surveyfile)
               ]
 
     if saveAll:
