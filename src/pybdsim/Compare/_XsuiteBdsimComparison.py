@@ -112,9 +112,9 @@ def _make_plotter(plot_info_dict):
         _plt.plot(xstopt.s, xsuiteYdata, 'g--', label=xstlegendy)
 
         # bds plot
-        _plt.errorbar(bdsopt['S'], bdsopt[plot_info_dict['bdsimdata'][0]], bdsopt[plot_info_dict['bdsimerror'][0]],
+        _plt.errorbar(bdsopt['S'] + xstopt.s[0], bdsopt[plot_info_dict['bdsimdata'][0]], bdsopt[plot_info_dict['bdsimerror'][0]],
                       label=bdslegendx, capsize=3, ls='', marker='x', color='b', **kwargs)
-        _plt.errorbar(bdsopt['S'], bdsopt[plot_info_dict['bdsimdata'][1]], bdsopt[plot_info_dict['bdsimerror'][1]],
+        _plt.errorbar(bdsopt['S'] + xstopt.s[0], bdsopt[plot_info_dict['bdsimdata'][1]], bdsopt[plot_info_dict['bdsimerror'][1]],
                       label=bdslegendy, capsize=3, ls='', marker='x', color='g', **kwargs)
 
         # Set axis labels and draw legend
@@ -239,6 +239,7 @@ def XsuiteVsBDSIM(xsuite, linename, bdsim, surveyfile=None, functions=None, post
 
     # load xsuite optics and bdsim optics
     xstopt = line.twiss(**tws0)
+    xstopt.s += s0
     bdsinst = _pybdsim.Data.CheckItsBDSAsciiData(bdsim)
     bdsopt = _GetBDSIMOptics(bdsinst)
 
